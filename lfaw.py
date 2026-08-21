@@ -231,66 +231,66 @@ def simulate_network(num_steps, bind_range, seed, lifespan, help_hurt):
         #######################
         ###Spectral analysis###
         #######################
-        
-        # A_t, idx_t = build_signed_adjacency(G)
-        # n_t = A_t.shape[0]
 
-        # #adaptive power-iteration: set tolerance here
-        # max_iters = 20
-        # tol = 1e-6
+        A_t, idx_t = build_signed_adjacency(G)
+        n_t = A_t.shape[0]
 
-
-
-        # vec = np.random.rand(n_t)
-        # prev_lam = 0.0
-
-        # for i in range(1, max_iters+1):
-        #     vec = A_t.dot(vec)
-        #     vec /= np.linalg.norm(vec)
-        #     lam = vec.dot(A_t.dot(vec))
-        #     if abs(lam - prev_lam) < tol:
-        #         break
-        #     prev_lam = lam
-        # lambda1_t = lam #rayleigh quotient
-
-        # #get 2nd eigenvalue
-
-        # B = A_t - lambda1_t * np.outer(vec,vec)
-        # vec2 = np.random.rand(n_t)
-        # prev_mu = 0.0
-        # for i in range(1, max_iters+1):
-        #     vec2 = B.dot(vec2)
-        #     vec2 /= np.linalg.norm(vec2)
-        #     mu = vec2.dot(B.dot(vec2))
-        #     if abs(mu - prev_mu) < tol:
-        #         break
-        #     prev_mu = mu
-        # lambda2_t = mu #rayleigh 2
-
-        # s_curr = pd.Series(vec, index = idx_t)
-
-        # if v_prev_s is None:
-        #     theta_t = 0.0
-        # else:
-        #     all_idx = v_prev_s.index.union(s_curr.index)
-        #     u = v_prev_s.reindex(all_idx, fill_value=0.0).values
-        #     w = s_curr.reindex(all_idx,    fill_value=0.0).values
-        #     # compute principal angle
-        #     cosθ = np.dot(u, w) / (np.linalg.norm(u)*np.linalg.norm(w))
-        #     theta_t = np.arccos(np.clip(cosθ, -1.0, 1.0))
-
-        # v_prev_s = s_curr
-
-
-        # abs_lambda1 = abs(lambda1_t)
+        #adaptive power-iteration: set tolerance here
+        max_iters = 20
+        tol = 1e-6
 
 
 
-        # # now record everything:
-        # spectral_radii.append(lambda1_t)
-        # spectral_radii_abs.append(abs_lambda1)
-        # spectral_angles.append(theta_t)
-        # spectral_gaps.append(abs_lambda1 - abs(lambda2_t))
+        vec = np.random.rand(n_t)
+        prev_lam = 0.0
+
+        for i in range(1, max_iters+1):
+            vec = A_t.dot(vec)
+            vec /= np.linalg.norm(vec)
+            lam = vec.dot(A_t.dot(vec))
+            if abs(lam - prev_lam) < tol:
+                break
+            prev_lam = lam
+        lambda1_t = lam #rayleigh quotient
+
+        #get 2nd eigenvalue
+
+        B = A_t - lambda1_t * np.outer(vec,vec)
+        vec2 = np.random.rand(n_t)
+        prev_mu = 0.0
+        for i in range(1, max_iters+1):
+            vec2 = B.dot(vec2)
+            vec2 /= np.linalg.norm(vec2)
+            mu = vec2.dot(B.dot(vec2))
+            if abs(mu - prev_mu) < tol:
+                break
+            prev_mu = mu
+        lambda2_t = mu #rayleigh 2
+
+        s_curr = pd.Series(vec, index = idx_t)
+
+        if v_prev_s is None:
+            theta_t = 0.0
+        else:
+            all_idx = v_prev_s.index.union(s_curr.index)
+            u = v_prev_s.reindex(all_idx, fill_value=0.0).values
+            w = s_curr.reindex(all_idx,    fill_value=0.0).values
+            # compute principal angle
+            cosθ = np.dot(u, w) / (np.linalg.norm(u)*np.linalg.norm(w))
+            theta_t = np.arccos(np.clip(cosθ, -1.0, 1.0))
+
+        v_prev_s = s_curr
+
+
+        abs_lambda1 = abs(lambda1_t)
+
+
+
+        # now record everything:
+        spectral_radii.append(lambda1_t)
+        spectral_radii_abs.append(abs_lambda1)
+        spectral_angles.append(theta_t)
+        spectral_gaps.append(abs_lambda1 - abs(lambda2_t))
 
 
 
@@ -490,10 +490,10 @@ def run_batches(num_batches, num_steps, bind_range, seed, lifespan, help_hurt):
         all_crossing_steps.append(crossing_step if crossing_step is not None else np.nan)
         all_largest_scc_size.append(largest_scc_size_series)
 
-        # all_spectral_radii.append(spectral_radii)
-        # all_spectral_radii_abs.append(spectral_radii_abs)
-        # all_spectral_angles.append(spectral_angles)
-        # all_spectral_gaps.append(spectral_gaps)
+        all_spectral_radii.append(spectral_radii)
+        all_spectral_radii_abs.append(spectral_radii_abs)
+        all_spectral_angles.append(spectral_angles)
+        all_spectral_gaps.append(spectral_gaps)
         # all_kappa_eff.append(kappa_eff_series)
 
         
@@ -535,11 +535,11 @@ def run_batches(num_batches, num_steps, bind_range, seed, lifespan, help_hurt):
     g_mu = float(np.mean(late_growth))
     g_se = float(np.std(late_growth, ddof=1) / np.sqrt(len(late_growth)))
 
-    # all_spectral_radii = np.array(all_spectral_radii)
-    # all_spectral_radii_abs = np.array(all_spectral_radii_abs)
-    # all_spectral_angles = np.array(all_spectral_angles)
-    # all_spectral_gaps = np.array(all_spectral_gaps)
-    
+    all_spectral_radii = np.array(all_spectral_radii)
+    all_spectral_radii_abs = np.array(all_spectral_radii_abs)
+    all_spectral_angles = np.array(all_spectral_angles)
+    all_spectral_gaps = np.array(all_spectral_gaps)
+
     all_largest_scc_size = np.array(all_largest_scc_size)
     all_kappa_eff = np.array(all_kappa_eff)
 
@@ -563,25 +563,25 @@ def run_batches(num_batches, num_steps, bind_range, seed, lifespan, help_hurt):
     # print("Principal eigenvector (first 5 components):",
     #       dist_dict['principal_eigvec'][:5])
 
-    # mean_lambda = np.mean(all_spectral_radii, axis = 0)
-    # std_lambda = np.std(all_spectral_radii, axis=0)
+    mean_lambda = np.mean(all_spectral_radii, axis = 0)
+    std_lambda = np.std(all_spectral_radii, axis=0)
 
-    # mean_lambda_abs = np.mean(all_spectral_radii_abs, axis = 0)
-    # std_lambda_abs = np.std(all_spectral_radii_abs, axis=0)
+    mean_lambda_abs = np.mean(all_spectral_radii_abs, axis = 0)
+    std_lambda_abs = np.std(all_spectral_radii_abs, axis=0)
 
-    # mean_angle = np.mean(all_spectral_angles, axis = 0)
-    # std_angle = np.std(all_spectral_angles, axis=0)
+    mean_angle = np.mean(all_spectral_angles, axis = 0)
+    std_angle = np.std(all_spectral_angles, axis=0)
 
-    # mean_gaps = np.mean(all_spectral_gaps, axis = 0)
-    # std_gaps = np.mean(all_spectral_gaps)
+    mean_gaps = np.mean(all_spectral_gaps, axis = 0)
+    std_gaps = np.std(all_spectral_gaps, axis=0)
 
     return {
-        # 'mean_gaps': mean_gaps,
-        # 'std_gaps': std_gaps,
-        # 'mean_lambda_abs': mean_lambda_abs,
-        # 'std_lambda_abs': std_lambda_abs,
-        # 'mean_angle': mean_angle,
-        # 'std_angle': std_angle,
+        'mean_gaps': mean_gaps,
+        'std_gaps': std_gaps,
+        'mean_lambda_abs': mean_lambda_abs,
+        'std_lambda_abs': std_lambda_abs,
+        'mean_angle': mean_angle,
+        'std_angle': std_angle,
         "late_growth_mu": g_mu,
         "late_growth_se": g_se,
 
@@ -611,8 +611,8 @@ def run_batches(num_batches, num_steps, bind_range, seed, lifespan, help_hurt):
         'num_nodes_remaining': dist_dict['num_of_nodes'],
         'mean_scc_size': mean_scc_size,
         'std_scc_size': std_scc_size,
-        # 'mean_lambda': mean_lambda,
-        # 'std_lambda': std_lambda,
+        'mean_lambda': mean_lambda,
+        'std_lambda': std_lambda,
         'all_kappa_eff': all_kappa_eff
 
     }
@@ -762,43 +762,43 @@ def plot_batch_statistics(stats):
 
     # # plt.legend()
 
-    # # Plot: eigenvalue
-    # plt.subplot(5, 2, 8)
-    # plt.errorbar(steps, stats['mean_lambda'], yerr=stats['std_lambda'],
-    #              color='#D55E00', alpha=0.7)
-    # plt.xlabel('Steps')
-    # plt.ylabel('Eigenvalue')
-    # plt.title('Mean Dominant Eigenvalue', fontsize = BIGGER_SIZE)
-    # plt.ylim(ymax=50)
+    # Plot: eigenvalue
+    plt.subplot(5, 2, 7)
+    plt.errorbar(steps, stats['mean_lambda'], yerr=stats['std_lambda'],
+                 color='#D55E00', alpha=0.7)
+    plt.xlabel('Steps')
+    plt.ylabel('Eigenvalue')
+    plt.title('Mean Dominant Eigenvalue', fontsize = BIGGER_SIZE)
+    plt.ylim(ymax=50)
 
 
-    # plt.subplot(5, 2, 9)
-    # plt.errorbar(steps, stats['mean_lambda_abs'], yerr=stats['std_lambda_abs'],
-    #              color='#CC79A7', alpha=0.7)
-    # plt.xlabel('Steps')
-    # plt.ylabel('Eigenvalue')
-    # plt.title('Abs Mean Dominant Eigenvalue', fontsize = BIGGER_SIZE)
-    # plt.ylim(ymax=50)
-   
+    plt.subplot(5, 2, 8)
+    plt.errorbar(steps, stats['mean_lambda_abs'], yerr=stats['std_lambda_abs'],
+                 color='#CC79A7', alpha=0.7)
+    plt.xlabel('Steps')
+    plt.ylabel('Eigenvalue')
+    plt.title('Abs Mean Dominant Eigenvalue', fontsize = BIGGER_SIZE)
+    plt.ylim(ymax=50)
 
-    # # Plot: spectral angle
-    # plt.subplot(5, 2, 9)
-    # plt.errorbar(steps, stats['mean_angle'], yerr=stats['std_angle'],
-    #              color='#648FFF', alpha=0.7)
-    # plt.xlabel('Steps')
-    # plt.ylabel('Theta_t')
-    # plt.title('Principal Angle', fontsize = BIGGER_SIZE)
-    # plt.ylim(ymax = 3.14)
 
-    #  # Plot: spectral gaps
-    # plt.subplot(5, 2, 10)
-    # plt.errorbar(steps, stats['mean_gaps'], yerr=stats['std_gaps'],
-    #              color='#FE6100', alpha=0.7)
-    # plt.xlabel('Steps')
-    # plt.ylabel('Gap')
-    # plt.title('Spectral Gap', fontsize = BIGGER_SIZE)
-    # plt.ylim(ymax = 45)
-    # # theme.apply_transforms()
+    # Plot: spectral angle
+    plt.subplot(5, 2, 9)
+    plt.errorbar(steps, stats['mean_angle'], yerr=stats['std_angle'],
+                 color='#648FFF', alpha=0.7)
+    plt.xlabel('Steps')
+    plt.ylabel('Theta_t')
+    plt.title('Principal Angle', fontsize = BIGGER_SIZE)
+    plt.ylim(ymax = 3.14)
+
+    # Plot: spectral gaps
+    plt.subplot(5, 2, 10)
+    plt.errorbar(steps, stats['mean_gaps'], yerr=stats['std_gaps'],
+                 color='#FE6100', alpha=0.7)
+    plt.xlabel('Steps')
+    plt.ylabel('Gap')
+    plt.title('Spectral Gap', fontsize = BIGGER_SIZE)
+    plt.ylim(ymax = 45)
+    # theme.apply_transforms()
     plt.tight_layout()
     # f1.update_annotations()
 
@@ -950,5 +950,43 @@ def main():
     print("Saved late_growth_vs_rho_full_sweep.png")
 
 
+def generate_paper_eigenanalysis_figures():
+    """
+    Reproduces the three published eigenanalysis summary figures (rho = 0.3, 0.5, 0.7;
+    L_S = 100; p_max = 0.003; 8,000 steps) with spectral analysis enabled. Separate from
+    main(), which runs the fast 21-point growth-rate sweep with spectral analysis off --
+    per-step eigen power-iteration is expensive, and running it across the full sweep
+    (21 rho values x 3 batches x 10,000 steps) would be far slower than the sweep alone.
+    """
+    num_batches = 3
+    num_steps = 8000
+    bind_range = 0.003
+    lifespan = 100
+    seed = 42
+
+    for rho in (0.3, 0.5, 0.7):
+        start_time = time.time()
+        stats = run_batches(
+            num_batches=num_batches,
+            num_steps=num_steps,
+            bind_range=bind_range,
+            seed=seed,
+            lifespan=lifespan,
+            help_hurt=rho
+        )
+        elapsed_time = time.time() - start_time
+        print(f"rho={rho:.1f} eigenanalysis done in {elapsed_time:.2f}s")
+
+        plot_batch_statistics(stats)
+        filename = f"{rho:.1f}.png"
+        plt.savefig(filename, dpi=300)
+        plt.close()
+        print(f"Saved {filename}")
+
+
 if __name__ == '__main__':
-    main()
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == 'eigen':
+        generate_paper_eigenanalysis_figures()
+    else:
+        main()

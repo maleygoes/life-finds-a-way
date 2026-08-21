@@ -20,20 +20,21 @@ mutually sustain one another — emerges and persists.
 
 | File | Purpose |
 |---|---|
-| `LFAWNoMatrices.py` | Complete model, batch runner, and figure generation |
+| `lfaw.py` | Complete model, batch runner, and figure generation |
 
 The module is self-contained. `simulate_network()` runs a single realization,
 `run_batches()` averages over replicates, and the plotting functions produce the diagnostic
-panels and the growth-rate-versus-`rho` figure reported in the manuscript.
+panels, the growth-rate-versus-`rho` figure, and the eigenanalysis figures reported in the
+manuscript.
 
 ## Reproducing the manuscript figures
 
 ```bash
 pip install -r requirements.txt
-python LFAWNoMatrices.py
+python lfaw.py
 ```
 
-`main()` performs the full sweep reported in the paper:
+`main()` performs the full growth-rate sweep reported in the paper:
 
 | Parameter | Value | Meaning |
 |---|---|---|
@@ -51,10 +52,22 @@ Output written to the working directory:
   bounded/unbounded transition
 
 The sweep is the expensive step. Runtime scales with `num_steps` × `num_batches` × 21; reduce
-`num_batches` or `num_steps` in `main()` for a faster smoke test.
+`num_batches` or `num_steps` in `main()` for a faster smoke test. Spectral quantities (below) are
+intentionally left out of this sweep, since per-step eigen analysis would make it far slower.
 
 Seeding is deterministic given `seed`, so a rerun at identical parameters reproduces the
 reported figures.
+
+### Eigenanalysis figures
+
+```bash
+python lfaw.py eigen
+```
+
+Reproduces the three published eigenanalysis summary figures (`rho = 0.3, 0.5, 0.7`;
+`lifespan = 100`; `bind_range = 0.003`; `num_steps = 8000`), each with ten panels: node/edge
+counts, SCC membership and size, help/harm degree distributions, the two dominant-eigenvalue
+measures, the principal angle, and the spectral gap. Output is `0.3.png`, `0.5.png`, `0.7.png`.
 
 ## Requirements
 
